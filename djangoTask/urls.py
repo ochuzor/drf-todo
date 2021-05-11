@@ -20,6 +20,7 @@ from todoApp import views
 
 router = routers.DefaultRouter()
 router.register(r'users', views.UserViewSet)
+router.register(r'todos', views.TodoViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
