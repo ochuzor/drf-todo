@@ -1,8 +1,11 @@
 from django.contrib.auth.models import User
-from rest_framework import viewsets
+from rest_framework import generics, viewsets
 from rest_framework import permissions
+
+from todoApp import serializers
 from todoApp.serializers import UserSerializer, TodoSerializer
 from todoApp.models import TodoItem
+from todoApp.permissions import IsOwnerOrReadOnly
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -14,7 +17,16 @@ class UserViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
 
-class TodoViewSet(viewsets.ModelViewSet):
+class TodoList(generics.ListCreateAPIView):
     queryset = TodoItem.objects.all()
     serializer_class = TodoSerializer
     permission_classes = [permissions.IsAuthenticated]
+
+    def perform_create(self, serializer):
+        serializer.save(added_by=self.request.user)
+
+
+class TodoDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = TodoItem.objects.all()
+    serializer_class = serializers.TodoSerializer
+    permission_classes = [permissions.IsAuthenticated, IsOwnerOrReadOnly]
