@@ -1,6 +1,5 @@
 from django.contrib.auth.models import User
-from rest_framework import generics, viewsets
-from rest_framework import permissions
+from rest_framework import generics, viewsets, permissions, filters
 
 from todoApp import serializers
 from todoApp.serializers import UserSerializer, TodoSerializer
@@ -18,11 +17,22 @@ class UserViewSet(viewsets.ModelViewSet):
 
 
 class TodoList(generics.ListCreateAPIView):
-    queryset = TodoItem.objects.all()
     serializer_class = TodoSerializer
     permission_classes = [permissions.IsAuthenticated]
+    filter_backends = [filters.OrderingFilter]
+    ordering_fields = ['is_done', 'created_at']
+    ordering = ['-created_at']
+
+    def get_queryset(self):
+        """
+        user only gets her/his own todos
+        """
+        return TodoItem.objects.filter(added_by=self.request.user)
 
     def perform_create(self, serializer):
+        """
+        automatically set this field before saving
+        """
         serializer.save(added_by=self.request.user)
 
 
