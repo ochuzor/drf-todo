@@ -21,7 +21,7 @@ class TodoList(generics.ListCreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
     filter_backends = [filters.OrderingFilter]
     ordering_fields = ['is_done', 'created_at']
-    ordering = ['-created_at']
+    ordering = ['created_at']
 
     def get_queryset(self):
         """
