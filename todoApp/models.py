@@ -8,7 +8,7 @@ class TodoItem(models.Model):
     is_done = models.BooleanField(default=False)
 
     def __str__(self):
-        return '%s' % (self.title)
+        return self.title
 
     class Meta:
         ordering = ['created_at']
